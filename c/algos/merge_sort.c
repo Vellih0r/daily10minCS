@@ -1,91 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int * merge_sort(int [], int);
-int * merge(int*, int*, int, int);
+void merge_sort(int*, int*, int, int);
+void merge(int*, int*, int, int, int);
 
 int main()
 {
     // test merge sort
-    int arr[] = {5,3,1,2,6,4,9,8,10,7};
-    int length = sizeof(arr) / sizeof(int);
-    int * newarr = merge_sort(arr, length);
-    for (int i = 0; i<length; i++)
-        printf("%d\n", newarr[i]);
+    int length = 5;
+    int * buffer = (int *)malloc(sizeof(int)*length);
+    int arrs[3][5] = { {1,2,3,4,5}, {5,4,3,2,1}, {10,5,2,4,9} };
+    merge_sort(arrs[0], buffer, 0, length);
+    for (int c=0, *p=arrs[0]; c<length; c++, p++)
+        printf("%d - ", *p);
+    printf("\n");
+    merge_sort(arrs[1], buffer, 0, length);
+    for (int c=0,  *p=arrs[1]; c<length; c++,p++)
+        printf("%d - ", *p); 
+    printf("\n");
+    merge_sort(arrs[2], buffer, 0, length);
+    for (int c=0, *p=arrs[2]; c<length; c++,p++)
+        printf("%d - ", *p);
+    printf("\n");
+    free(buffer);
 }
 
 // sorting algorithm that implements recursion
-int * merge_sort(int * arr, int length)
+void merge_sort(int * arr, int * buffer, int left, int right)
 {
-    int low = 0;
     // base case (only one element)
-    if (length <= 1)
-        return arr;
+    if (right-left < 2)
+        return;
     // find mid value
-    int mid = low + (length-low)/2;
-    // loggin
-    printf("low=%d length=%d mid=%d\n", low, length, mid);
-    int * left_arr = (int *)malloc(sizeof(int)*mid); 
-    // right arr is everething after mid (including mid)
-    int * right_arr = (int *)malloc(sizeof(int)*(length-mid));
-    for (int i = 0; i < mid; i++)
-        left_arr[i] = arr[i];
-    for (int c = 0, i = mid; i < length; i++, c++)
-        right_arr[c] = arr[i];
-        
+    int mid = left + (right-left) / 2;
+    // split case to 2 smaller with indexes
     // recursive calls
-    left_arr = merge_sort(left_arr, mid);
-    right_arr = merge_sort(right_arr, length-mid);
+    merge_sort(arr, buffer, left, mid);
+    merge_sort(arr, buffer, mid, right);
     // merge
-    arr = merge(left_arr, right_arr, mid, length);
-    // free memory
-    //free(left_arr);
-    //free(right_arr);
-    // return merge left, right
-    return arr;
+    merge(arr, buffer, left, mid, right);
 }
 
 
-int * merge(int * left, int * right, int mid, int length)
+void merge(int* arr, int* buffer, int left, int mid, int right)
 {
-    int count_r, count_l, len_r, len_l;
-    count_r = count_l = 0;
-    len_l = mid;
-    len_r = length-mid;
+    int i, j, k, r, l;
+    i = left;
+    j = mid;
+    k = left;
 
-    int * merged = (int *)malloc(sizeof(int)*length);
-    
-    int * m = merged;
-    int r = 0;
-    int l = 0;
     // paste lowest value to the new merged arr
-    while (count_r < len_r && count_l < len_l)
+    while (i < mid && j < right)
     {
-        r = right[count_r];
-        l = left[count_l];
-        if (r < l)
+        l = arr[i];
+        r = arr[j];
+        if (l < r)
         {
-            *m = r;
-            count_r++;
+            buffer[k] = l;
+            i++;
         }
         else
         {
-            *m = l;
-            count_l++;
+            buffer[k] = r;
+            j++;
         }
-        m++;
+        k++;
     }
-    while (count_r < len_r)
+    while (i < mid)
     {
-        *m = right[count_r++];
-        m++;
+        buffer[k] = arr[i++];
+        k++;
     }
-    while (count_l < len_l)
+    while (j < right)
     {
-        *m = left[count_l++];
-        m++;
+        buffer[k] = arr[j++];
+        k++;
     }
-    return merged;
+
+    for (int i=left; i<right; i++)
+    {
+        arr[i] = buffer[i];
+    }
 }
 
 /*
