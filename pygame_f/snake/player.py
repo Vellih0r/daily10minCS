@@ -1,6 +1,36 @@
 from pygame import Rect, Vector2, draw, Color
 import pygame
 
+class Head:
+    def __init__(self, size):
+        self.head = pygame.Surface(size, pygame.SRCALPHA)
+        self._create_head()
+        self.full_size = size
+        self.dir = (1,0)
+        self.pos = Vector2(5,5)
+
+    def set_dir(self, dir: tuple):
+        self.dir = dir
+
+    def get_dir(self):
+        return self.dir
+    
+    def set_pos(self, pos):
+        self.pos = pos
+
+    def get_pos(self):
+        return self.pos
+
+    def _create_head(self):
+        # base of head is just a tail bart
+        self._create_part(self.head)
+        # add eyes
+        eye_size = self.full_size[0]//6
+        x = self.full_size[0]//5
+        y = self.full_size[1]//3
+        pygame.draw.rect(self.head, Color("black"), (x, y, eye_size, eye_size))
+        pygame.draw.rect(self.head, Color("Black"), (x*3, y, eye_size, eye_size))
+
 class Player:
     # TODO
     # review
@@ -10,7 +40,7 @@ class Player:
     # class for apple
     # better collors
     # score menu and restart
-    def __init__(self, size: tuple, position: Vector2):
+    def __init__(self, size: tuple):
         self.OUTLINE_WIDTH = 3
         self.full_size = size
         self.inner_size = size[0]-self.OUTLINE_WIDTH*2, size[1]-self.OUTLINE_WIDTH*2
@@ -19,11 +49,22 @@ class Player:
         self.direction = (0,1)
 
         # head and tail are separete prepared surfaces to display them
-        self.head = pygame.Surface(size, pygame.SRCALPHA)
+        self.head = Head(size)
         self._create_head()
-        self.tail = pygame.Surface(size, pygame.SRCALPHA)
-        self._create_tail(self.tail)
+        self.parts = []
+        self.basic_part = pygame.Surface(self.full_size, pygame.SRCALPHA)
+        self._create_part(self.basic_part)
 
+    def grow1(self, n = 1, position = None, direction = None):
+        if not position:
+            position = self.head.get_pos()
+        if not direction:
+            direction = self.head.get_dir()
+        # spawn new part behind head
+        for _ in range(n):
+            self.parts.append(self.basic_part)
+
+    # kill last part in arr and grow1
     def move(self, keys, screen, position, delta):
         if keys[pygame.K_w]:
             self.direction = (0, 1)
@@ -37,6 +78,8 @@ class Player:
         position.x -= (self.inner_size[0] * self.direction[0]) * delta/150
         position.y -= (self.inner_size[1] * self.direction[1]) * delta/150
         self.display(screen, position, self.direction)
+        self.grow1()
+        self.parts.pop()
 
     def grow(self, inc = 1):
         self.tail_length += inc
@@ -48,7 +91,7 @@ class Player:
     # draw head of separate surface
     def _create_head(self):
         # base of head is just a tail bart
-        self._create_tail(self.head)
+        self._create_part(self.head)
         # add eyes
         eye_size = self.full_size[0]//6
         x = self.full_size[0]//5
@@ -56,7 +99,7 @@ class Player:
         pygame.draw.rect(self.head, Color("black"), (x, y, eye_size, eye_size))
         pygame.draw.rect(self.head, Color("Black"), (x*3, y, eye_size, eye_size))
 
-    def _create_tail(self, surface):
+    def _create_part(self, surface):
         surface.fill(Color("black"), (0,0, *self.full_size))
         pygame.draw.rect(surface, self.color, (self.OUTLINE_WIDTH, self.OUTLINE_WIDTH, *self.inner_size))
 
@@ -76,14 +119,20 @@ class Player:
 
     def _display_tail(self, screen, position, direction):
         pos = position.copy()
-        for _ in range(self.tail_length):
-            part = self.tail
+        for p in self.parts:
+            pos.x += self.inner_size[0] * direction[0]
+            pos.y += self.inner_size[1] * direction[1]
+            rect = p.get_rect(center=pos.center)
+            screen.blit(p, rect)
+
+        # for _ in range(self.tail_length):
+        #     part = self.tail
             
-            # turn body in oposit direction
-            part_direction = direction
-            pos.x += self.inner_size[0] * part_direction[0]
-            pos.y += self.inner_size[1] * part_direction[1]
-            rect = part.get_rect(center=pos.center)
-            screen.blit(part, rect)
+        #     # turn body in oposit direction
+        #     part_direction = direction
+        #     pos.x += self.inner_size[0] * part_direction[0]
+        #     pos.y += self.inner_size[1] * part_direction[1]
+        #     rect = part.get_rect(center=pos.center)
+        #     screen.blit(part, rect)
 
     

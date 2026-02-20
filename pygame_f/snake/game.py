@@ -1,5 +1,4 @@
 import pygame
-from body_part import Bodypart
 from player import Player
 
 # window size
@@ -17,7 +16,7 @@ fps = 60
 player_pos = pygame.Vector2(width/2, height/2)
 pos = pygame.Rect(player_pos, (1, 1))
 
-snake = Player(snake_size, player_pos)
+snake = Player(snake_size)
 snake.grow(2)
 
 

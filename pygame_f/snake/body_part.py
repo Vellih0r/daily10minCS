@@ -4,6 +4,12 @@ import pygame
 COLOR = Color("green")
 speed_decrement = 200
 
+class Part:
+    def __init__(self, surface: pygame.Rect, pos: pygame.Vector2):
+        self.surface = surface
+        self.pos = pos
+
+
 class Bodypart:
     def __init__(self, full_size, inner_size):
         self.OUTLINE_WIDTH = 3
