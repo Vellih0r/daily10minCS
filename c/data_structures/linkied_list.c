@@ -11,12 +11,17 @@ struct LinkedList
     struct Node* root;
 };
 
-int main()
+void LinkedList(struct LinkedList *l, int value)
 {
     struct Node root;
-    root.value = 0;
+    root.value = value;
+    l->root = &root;
+}
+
+int main()
+{
     struct LinkedList l;
-    l.root = &root;
+    LinkedList(&l, 0);
     printf("%d\n", l.root->value);
     return 0;
 }
