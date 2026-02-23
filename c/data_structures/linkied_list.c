@@ -16,13 +16,28 @@ void init(struct LinkedList * l, int value)
 {
     struct Node * root = malloc(sizeof(struct Node));
     root->value = value;
+    root->next = NULL;
     l->root = root;
+}
+
+void add_ptp(struct Node **head, int value)
+{
+    struct Node * node = malloc(sizeof(struct Node));
+    node->value = value;
+    node->next = NULL;
+
+    while (*head)
+    {
+        head = &(*head)->next;
+    }
+    *head = node;
 }
 
 void add(struct LinkedList * l, int value)
 {
     struct Node * node = malloc(sizeof(struct Node));
     node->value = value;
+    node->next = NULL;
     if (!l->root)
     {
         l->root = node;
@@ -36,30 +51,81 @@ void add(struct LinkedList * l, int value)
     current->next = node;
 }
 
-void delete(struct LinkedList * l)
+void clear(struct LinkedList * l)
 {
-    if (!l->root)
-    {
-        free(l);
-        return;
-    }
     struct Node * current = l->root;
-    if (!current->next)
+    while (current)
     {
+        struct Node * tmp = current;
+        current = current->next;
+        free(tmp);
+    }
+    l->root = NULL;
+}
+
+// deletes first occurance of key in linked list
+void removeNode(struct LinkedList * l, int key)
+{
+    struct Node * current = l->root;
+    struct Node * prev = NULL;
+    // if root itself holds key to be deleted
+    if (current != NULL && current->value == key)
+    {
+        l->root = current->next;
         free(current);
-        free(l);
         return;
     }
-    while (current->next && current->next->next)
+    // search for key
+    while (current != NULL && current->value != key)
     {
-        //free(current->next);
-        current->next = current->next->next;
+        prev = current;
+        current = current->next;
     }
-    free(l);
+
+    // if key was not found
+    if (current == NULL)
+        return;
+    // skip node with key
+    prev->next = current->next;
+    free(current);
+}
+
+// Linus Torvalds's more elegant remove
+void remove_elegant(struct Node ** head, int key)
+{
+    while (*head && (*head)->value != key)
+       head = &(*head)->next; 
+
+    if (*head)
+    {
+        struct Node * tmp = *head;
+        *head = (*head)->next;
+        free(tmp);
+    }
+}
+
+void print_ll_ptp(struct Node **head)
+{
+    if (!*head)
+    {
+        printf("empty\n");
+        return;
+    }
+    while((*head)->next)
+    {
+        printf("%d->", (*head)->value);
+        head = &(*head)->next;
+    }
+    printf("%d\n", (*head)->value);
 }
 
 void print_ll(struct LinkedList * l)
 {
+    if (!l->root)
+    {
+        printf("empty\n");
+        return;
+    }
     struct Node * current = l->root;
     while (current->next)
     {
@@ -71,13 +137,23 @@ void print_ll(struct LinkedList * l)
 
 int main()
 {
-    struct LinkedList l;
+    struct Node * head = { NULL };
+    add_ptp(&head, 5);
+    print_ll_ptp(&head);
+    struct LinkedList l = { NULL };
     add(&l, 0);
     add(&l, 1);
     add(&l, 2);
     add(&l, 3);
+
     print_ll(&l);
-    delete(&l);
+    removeNode(&l, 0);
     print_ll(&l);
-    return 0;
+    remove_elegant(&l.root, 1);
+    print_ll(&l);
+    remove_elegant(&l.root, 3);
+    print_ll(&l);
+    clear(&l);
+    print_ll(&l);
+    remove_elegant(&l.root,4);
 }
