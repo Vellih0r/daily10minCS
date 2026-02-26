@@ -25,14 +25,15 @@ void disable_raw_mode() {
 
 // draw carachter at certain position
 #define cursor(x,y) printf("\033[%d;%dH",(x),(y))
-struct Vector2
+struct Body
 {
     int x;
     int y;
     char sprite;
 };
 
-void drawField(int, int, struct Vector2 *);
+void drawField(int, int, struct Body *);
+void spawn_apple(int, int, struct Body *);
 
 int main()
 {
@@ -44,19 +45,34 @@ int main()
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     row = w.ws_row;
     col = w.ws_col;
+    // create apple
+    struct Body apple;
+    apple.x = row/2;
+    apple.y = col/4;
+    apple.sprite = 'a';
+
+    spawn_apple(row, col, &apple);
 
     // create player
-    struct Vector2 player;
+    struct Body player;
     player.x = row/2;
     player.y = col/2;
     player.sprite = '@';
 
-    printf("Columns: %d\n", col);
-    printf("Rows: %d\n", row);
-
     drawField(row, col, &player);
+    cursor(apple.x, apple.y);
+    printf("%c", apple.sprite);
+    cursor(player.x, player.y);
     while( (c = getchar()) != 'q')
     {
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        if (w.ws_row != row || w.ws_col != col)
+        {
+            row = w.ws_row;
+            col = w.ws_col;
+            drawField(row, col, &player);
+        }
+
         // remove player from prev pos 
         cursor(player.x, player.y);
         printf(".");
@@ -91,12 +107,19 @@ int main()
         // draw player at new pos
         cursor(player.x, player.y);
         printf("%c", player.sprite);
-        //drawField(row, col, &player);
+        // eat apple and spawn new one
+        printf("player x%d apple x%d player y%d apple y%d", player.x, apple.x, player.y, apple.y);
+        if (player.x == apple.x &&  player.y == apple.y)
+        {
+            printf("Apple!");
+            spawn_apple(row, col, &apple);
+        }
+        cursor(player.x, player.y);
     }
     return 0;
 }
 
-void drawField(int row, int col, struct Vector2 *p)
+void drawField(int row, int col, struct Body *p)
 {
     for (int i=0; i<col; i++)
     {
@@ -112,4 +135,12 @@ void drawField(int row, int col, struct Vector2 *p)
             printf(".");
         }
     }
+}
+
+void spawn_apple(int row, int col, struct Body *a)
+{
+    a->x = row/4;
+    a->y = col/2; 
+    cursor(a->x, a->y);
+    printf("%c", a->sprite);
 }
