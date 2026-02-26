@@ -24,7 +24,7 @@ void disable_raw_mode() {
 }
 
 // draw carachter at certain position
-#define cursor(x,y) printf("\033[%d;%dH",(x),(y))
+#define cursor(x,y) printf("\033[%d;%dH",(y),(x))
 struct Body
 {
     int x;
@@ -43,8 +43,8 @@ int main()
     // get windows size
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    row = w.ws_row;
-    col = w.ws_col;
+    row = w.ws_col;
+    col = w.ws_row;
     // create apple
     struct Body apple;
     apple.x = row/2;
@@ -68,8 +68,8 @@ int main()
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
         if (w.ws_row != row || w.ws_col != col)
         {
-            row = w.ws_row;
-            col = w.ws_col;
+            row = w.ws_col;
+            col = w.ws_row;
             drawField(row, col, &player);
         }
 
@@ -78,37 +78,36 @@ int main()
         printf(".");
         if (c == 'h')
         {
-            if (player.y == 1)
-                {player.y = col-1;}
-            else
-                {player.y--;}
-        }
-        else if (c == 'j')
-        {
-            if (player.x == row-1)
-                {player.x = 1;}
-            else
-                {player.x++;}
-        }
-        else if (c == 'k')
-        {
             if (player.x == 1)
                 {player.x = row-1;}
             else
                 {player.x--;}
         }
-        else if (c=='l')
+        else if (c == 'j')
         {
             if (player.y == col-1)
                 {player.y = 1;}
             else
                 {player.y++;}
         }
+        else if (c == 'k')
+        {
+            if (player.y == 1)
+                {player.y = col-1;}
+            else
+                {player.y--;}
+        }
+        else if (c=='l')
+        {
+            if (player.x == row-1)
+                {player.x = 1;}
+            else
+                {player.x++;}
+        }
         // draw player at new pos
         cursor(player.x, player.y);
         printf("%c", player.sprite);
         // eat apple and spawn new one
-        printf("player x%d apple x%d player y%d apple y%d", player.x, apple.x, player.y, apple.y);
         if (player.x == apple.x &&  player.y == apple.y)
         {
             printf("Apple!");
@@ -140,7 +139,7 @@ void drawField(int row, int col, struct Body *p)
 void spawn_apple(int row, int col, struct Body *a)
 {
     a->x = row/4;
-    a->y = col/2; 
+    a->y = col/4; 
     cursor(a->x, a->y);
     printf("%c", a->sprite);
 }
