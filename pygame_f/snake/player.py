@@ -1,25 +1,17 @@
 from pygame import Rect, Vector2, draw, Color
 import pygame
 
+# head direction -> rotate eyes and draw new body part behind head
+# each move delete last block (tail)
+# if apple eaten -> do not delete(or grow immediatly)
+# make movement relative to block size
+# collisions
+
 class Head:
     def __init__(self, size):
         self.head = pygame.Surface(size, pygame.SRCALPHA)
         self._create_head()
         self.full_size = size
-        self.dir = (1,0)
-        self.pos = Vector2(5,5)
-
-    def set_dir(self, dir: tuple):
-        self.dir = dir
-
-    def get_dir(self):
-        return self.dir
-    
-    def set_pos(self, pos):
-        self.pos = pos
-
-    def get_pos(self):
-        return self.pos
 
     def _create_head(self):
         # base of head is just a tail bart
@@ -45,7 +37,6 @@ class Player:
         self.full_size = size
         self.inner_size = size[0]-self.OUTLINE_WIDTH*2, size[1]-self.OUTLINE_WIDTH*2
         self.color = Color("green")
-        self.tail_length = 0
         self.direction = (0,1)
 
         # head and tail are separete prepared surfaces to display them
