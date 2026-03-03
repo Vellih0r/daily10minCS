@@ -7,7 +7,7 @@ struct Node
     struct Node *next;
 };
 
-void print_ll(struct Node **head)
+void l_print(struct Node **head)
 {
     while(*head)
     {
@@ -21,7 +21,7 @@ void print_ll(struct Node **head)
     }
 }
 
-void add(struct Node **head, int value)
+void l_add(struct Node **head, int value)
 {
     struct Node *newNode = malloc(sizeof(struct Node));
     newNode->val = value;
@@ -32,7 +32,14 @@ void add(struct Node **head, int value)
     *head = newNode;
 }
 
-void remove_key(struct Node **head, int key)
+struct Node* l_get(struct Node **head, int key)
+{
+    while(*head && (*head)->val != key)
+        head=&(*head)->next;
+    return *head;
+}
+
+void l_remove_key(struct Node **head, int key)
 {
     while(*head && (*head)->val != key)
         head = &(*head)->next;
@@ -41,7 +48,7 @@ void remove_key(struct Node **head, int key)
     free(tmp);
 }  
 
-void remove_node(struct Node **head, struct Node **node)
+void l_remove_node(struct Node **head, struct Node **node)
 {
     while(*head && *head != *node)
         head = &(*head)->next;
@@ -49,7 +56,7 @@ void remove_node(struct Node **head, struct Node **node)
     free(*node);
 }
 
-void destroy(struct Node **head)
+void l_destroy(struct Node **head)
 {
     struct Node *current = *head;
     struct Node *next;
@@ -64,17 +71,19 @@ void destroy(struct Node **head)
 
 int main() {
     struct Node *head = { NULL };
-    print_ll(&head);
-    add(&head, 5);
-    add(&head, 7);
-    add(&head, 9);
-    print_ll(&head);
+    l_print(&head);
+    l_add(&head, 5);
+    l_add(&head, 7);
+    l_add(&head, 9);
+    l_print(&head);
+    struct Node *node = l_get(&head, 5);
+    printf("get %d\n", node->val);
     
     struct Node *tmp = (*head).next;
-    remove_node(&head, &tmp);
+    l_remove_node(&head, &tmp);
     
-    print_ll(&head);
-    destroy(&head);
-    print_ll(&head);
+    l_print(&head);
+    l_destroy(&head);
+    l_print(&head);
     free(head);
 }
