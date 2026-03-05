@@ -9,6 +9,8 @@ struct Node
 
 void l_print(struct Node **head)
 {
+    if (head == NULL)
+        return;
     while(*head)
     {
         if (!(*head)->next)
@@ -67,7 +69,6 @@ void l_destroy(struct Node **head)
         current = next;
     }
     *head = NULL;
-    free(*head);
 }
 
 /*
