@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include "l_list.h"
 
-
-int hash(int val)
+long hash(char val[])
 {
-    return val*15;
+    long result = 0;
+    for (int i = 0; val[i] != '\0'; i++)
+    {
+        result = val[i] * 15;
+    }
+    return result;
 }
 
 typedef struct Hashmap
@@ -14,32 +18,47 @@ typedef struct Hashmap
     struct Node** list;
 }Hashmap;
 
-void init(Hashmap* h)
+void init(Hashmap* map, int size)
 {
-   h->size = 5;
-   h->list = malloc(sizeof(struct Node*) * h->size); 
+   map->size = size;
+   map->list = malloc(sizeof(struct Node*) * size); 
 }
 
-void push(Hashmap* map, int key, int value)
+long key_to_index(char key[], int size)
 {
-    int index = hash(key);
-    index = index % map->size;
-    l_add(&(map->list[index]), value);
+    long index = hash(key);
+    index = index % size;
+    return index;
+}
+
+void push(Hashmap* map, char key[], int value)
+{
+    int i = key_to_index(key, map->size);
+    l_add(&(map->list[i]), value);
+}
+
+int h_get(Hashmap* map, char key[])
+{
+    long k_hash = hash(key);
+    int i = key_to_index(key, map->size);
+    struct Node* tmp = map->list[i];
+    return tmp->val;    
+}
+
+void h_destroy(Hashmap* map)
+{
+    for (int i = 0; i < map->size; i++)
+        l_destroy(&map->list[i]);
+    free(map->list);
 }
 
 int main()
 {
     Hashmap test;
-    init(&test);
-    push(&test, 'a', 5);
-    int i = hash('a');
-    i = i % 5;
-    printf("%d\n", i);
-    l_add(&test.list[i], 10);
-    l_print(&test.list[i]);
-    int a = 75;
-    printf("val %d\n", a);
-    int h = hash(a);
-    printf("hashed %d\n", h);
-    return 0;
+    init(&test, 5);
+    char key[] = "nuts";
+    push(&test, key, 5);
+
+    printf("%s->%d\n", key, h_get(&test, key));
+    h_destroy(&test);
 }
