@@ -69,7 +69,7 @@ void l_destroy(struct Node **head)
     *head = NULL;
 }
 
-int main() {
+/*int main() {
     struct Node *head = { NULL };
     l_print(&head);
     l_add(&head, 5);
@@ -86,4 +86,4 @@ int main() {
     l_destroy(&head);
     l_print(&head);
     free(head);
-}
+}*/
