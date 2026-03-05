@@ -12,15 +12,15 @@ long hash(int val)
 typedef struct Hashset
 {
     int size;
-    struct Node** backet;
+    struct Node** bucket;
 }Hashset;
 
 void init(Hashset* set, int size)
 {
    set->size = size;
-   set->backet = malloc(sizeof(struct Node*) * size); 
+   set->bucket = malloc(sizeof(struct Node*) * size); 
    for (int i = 0; i < size; i++)
-       set->backet[i] = NULL;
+       set->bucket[i] = NULL;
 }
 
 long key_to_index(int key, int size)
@@ -33,27 +33,27 @@ long key_to_index(int key, int size)
 void push(Hashset* set, int key)
 {
     int i = key_to_index(key, set->size);
-    l_add(&set->backet[i], key);
+    l_add(&set->bucket[i], key);
 }
 
 int get(Hashset* set, int index)
 {
-    if (!set->backet[index])
+    if (!set->bucket[index])
         return -1;
-    return (set->backet[index])->val;    
+    return (set->bucket[index])->val;    
 }
 
 void s_destroy(Hashset* set)
 {
     for (int i = 0; i < set->size; i++)
-        l_destroy(&(set->backet[i]));
-    free(set->backet);
+        l_destroy(&(set->bucket[i]));
+    free(set->bucket);
 }
 
 void s_print(Hashset* set)
 {
     for (int i = 0; i < set->size-1; i++)
-        l_print(&set->backet[i]);
+        l_print(set->bucket[i]);
 }
 
 // bugs somewhere
@@ -64,6 +64,5 @@ int main()
     push(&test, 10);
 
     s_print(&test);
-    printf("%d\n", test.backet[2]->val);
     s_destroy(&test);
 }

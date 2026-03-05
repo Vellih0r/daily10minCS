@@ -7,19 +7,17 @@ struct Node
     struct Node *next;
 };
 
-void l_print(struct Node **head)
+void l_print(struct Node *head)
 {
-    if (head == NULL)
-        return;
-    while(*head)
+    while(head)
     {
-        if (!(*head)->next)
+        if (!head->next)
         {
-            printf("%d\n", (*head)->val);
+            printf("%d\n", head->val);
             return;
         }
-        printf("%d->", (*head)->val);
-        head = &(*head)->next;
+        printf("%d->", head->val);
+        head = head->next;
     }
 }
 
@@ -45,6 +43,10 @@ void l_remove_key(struct Node **head, int key)
 {
     while(*head && (*head)->val != key)
         head = &(*head)->next;
+    
+    if (*head == NULL)
+        return;
+
     struct Node *tmp = *head;
     *head = (*head)->next;
     free(tmp);
@@ -54,6 +56,10 @@ void l_remove_node(struct Node **head, struct Node **node)
 {
     while(*head && *head != *node)
         head = &(*head)->next;
+
+    if (*head == NULL)
+        return;
+
     *head = (*head)->next;
     free(*node);
 }
@@ -74,19 +80,19 @@ void l_destroy(struct Node **head)
 /*
 int main() {
     struct Node *head = { NULL };
-    l_print(&head);
+    l_print(head);
     l_add(&head, 5);
     l_add(&head, 7);
     l_add(&head, 9);
-    l_print(&head);
+    l_print(head);
     struct Node *node = l_get(&head, 5);
     printf("get %d\n", node->val);
     
     struct Node *tmp = (*head).next;
     l_remove_node(&head, &tmp);
     
-    l_print(&head);
+    l_print(head);
     l_destroy(&head);
-    l_print(&head);
+    l_print(head);
 }
 */
