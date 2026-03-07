@@ -77,6 +77,20 @@ def decrypt(msg: str, shift: int) -> str:
         out += itoc[index]
     return out
 
+def gtp_encrypt(msg: str, shift: int) -> str:
+    shift %= LENGTH
+    out = ""
+
+    for c in msg:
+        index = ctoi.get(c)
+
+        if index is None:
+            out += c
+            continue
+
+        index = (index + shift) % LENGTH
+    return out
+
 def gtp_decrypt(msg: str, shift: int) -> str:
     shift %= LENGTH
     out = ""
@@ -95,10 +109,11 @@ def gtp_decrypt(msg: str, shift: int) -> str:
 
 
 if (__name__ == "__main__"):
-    message = input("Enter your secret message: ")
-    secret = encrypt(message, SECRET_KEY)
-    print("\nEncrypted message:\n", secret)
-    key = int(input("\nEnter key to decrypt it: "))
-    result = decrypt(secret, key)
-    print("\nHere is your decrypted message:\n", result)
+    import sys
+    msg = ""
+    if len(sys.argv) > 1:
+        msg = sys.argv[1]
+
+    print(encrypt(msg, SECRET_KEY))
+
 
