@@ -1,20 +1,20 @@
 SECRET_KEY = 5
 # simple_alphabet=" abcdefghijklmnopqrstuvwxyz"
-alphabet=" ABCDEFGHIJCLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,?*&^%$#@!()'\\\""
+alphabet=''' ABCDEFGHIJCLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/`_~|[]{}.,?*&^%$#@!()\'<>\\"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхчшщъыьэюя0123456789'''
 
 # Character TO Integer
 # create dict - character : integer
 # {'a' : 1} -> 'a' belongs to index 1
 ctoi = dict()
 for index, char in enumerate(alphabet):
-    itoc[char] = index
+    ctoi[char] = index
 
 # itoc = Integer TO Char -> we can get chracter by its index, using regular list
 # list[1] = a
 # list[26] = z
-ctoi = []
+itoc = []
 for char in alphabet:
-    ctoi.append(char)
+    itoc.append(char)
 
 # constant for alpphabet's length
 LENGTH = len(itoc)
