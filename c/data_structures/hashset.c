@@ -30,10 +30,11 @@ long key_to_index(int key, int size)
     return index;
 }
 
-void push(Hashset* set, int key)
+void push(Hashset* set, int val)
 {
-    int i = key_to_index(key, set->size);
-    l_add(&set->bucket[i], key);
+    int i = key_to_index(val, set->size);
+    printf("bucketindex = %d\n", i);
+    l_add(&set->bucket[i], val);
 }
 
 int get(Hashset* set, int index)
@@ -53,7 +54,10 @@ void s_destroy(Hashset* set)
 void s_print(Hashset* set)
 {
     for (int i = 0; i < set->size-1; i++)
+    {
         l_print(set->bucket[i]);
+        printf("\n");
+    }
 }
 
 // bugs somewhere
@@ -61,7 +65,12 @@ int main()
 {
     Hashset test;
     init(&test, 5);
-    push(&test, 10);
+    push(&test, 20);
+    push(&test, 30);
+    push(&test, 40);
+    push(&test, 41);
+    push(&test, 42);
+    push(&test, 43);
 
     s_print(&test);
     s_destroy(&test);
